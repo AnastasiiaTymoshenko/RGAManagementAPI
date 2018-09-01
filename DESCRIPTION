@@ -2,8 +2,7 @@ Package: RGAManagementAPI
 Type: Package
 Title: Google Analytics Management API R
 Version: 1.1.1
-Authors@R: c(
-    person("Anastasiia", "Tymoshenko", role=c("aut"), email = "a.notevskaya@gmail.com"))
+Authors@R: c(person("Anastasiia", "Tymoshenko", role = c("aut", "cre"), email = "a.notevskaya@gmail.com"))
 Description: Functions for users management in Google Analytics.
 URL: https://github.com/AnastasiiaTymoshenko/RGAManagementAPI
 BugReports: https://github.com/AnastasiiaTymoshenko/RGAManagementAPI/issues
