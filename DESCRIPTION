@@ -6,3 +6,4 @@ Authors@R: c(person("Anastasiia", "Tymoshenko", role = c("aut", "cre"), email = 
 Description: Functions for users management in Google Analytics.
 URL: https://github.com/AnastasiiaTymoshenko/RGAManagementAPI
 BugReports: https://github.com/AnastasiiaTymoshenko/RGAManagementAPI/issues
+RoxygenNote: 6.1.0
