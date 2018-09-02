@@ -133,6 +133,9 @@ delete_user_from_view <- function(acc_id, webproperty_id, view_id, email_to_dele
 
 #перебор аккаунтов, ресурсов и представлений с вызовом функций удаления на каждом шаге
 delete_users_permissions <- function(emails_to_delete){
+
+  acc_list <- ga_accounts()
+
   for(i in 1:nrow(acc_list$items))
   {
     id <- acc_list$items[i, "id"]
