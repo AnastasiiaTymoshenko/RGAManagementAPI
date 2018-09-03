@@ -1,4 +1,5 @@
-#функция для проверки наличия необходимых прав доступа для просмотра и удаления пользователей аккаунта
+#'С„СѓРЅРєС†РёСЏ РґР»СЏ РїСЂРѕРІРµСЂРєРё РЅР°Р»РёС‡РёСЏ РЅРµРѕР±С…РѕРґРёРјС‹С… РїСЂР°РІ РґРѕСЃС‚СѓРїР° РґР»СЏ РїСЂРѕСЃРјРѕС‚СЂР° Рё СѓРґР°Р»РµРЅРёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ Р°РєРєР°СѓРЅС‚Р°
+#' @export
 inspect_permissions <- function(x, n, ga_level){
   
   id <- x$items[n, "id"]
@@ -10,12 +11,13 @@ inspect_permissions <- function(x, n, ga_level){
   else
     
   {
-    cat(ga_level, name, " - ", id, " недостаточно прав для просмотра и удаления пользователей.", "\n")
+    cat(ga_level, name, " - ", id, " РЅРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РїСЂР°РІ РґР»СЏ РїСЂРѕСЃРјРѕС‚СЂР° Рё СѓРґР°Р»РµРЅРёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№.", "\n")
     return(FALSE)
   }
 }
 
-#функция для удаления пользователя из аккаунта.
+#'С„СѓРЅРєС†РёСЏ РґР»СЏ СѓРґР°Р»РµРЅРёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёР· Р°РєРєР°СѓРЅС‚Р°.
+#' @export
 delete_user_from_account <- function(acc_id, email_to_delete){
   
   acc_user_list <- ga_users_list(acc_id, webPropertyId = NULL, viewId = NULL)
@@ -32,7 +34,7 @@ delete_user_from_account <- function(acc_id, email_to_delete){
   
   if(userlink_to_delete == "")
   {
-    message("У пользователя нет доступа к данному аккаунту.")
+    message("РЈ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РЅРµС‚ РґРѕСЃС‚СѓРїР° Рє РґР°РЅРЅРѕРјСѓ Р°РєРєР°СѓРЅС‚Сѓ.")
     return(FALSE)
   }
   
@@ -55,7 +57,8 @@ delete_user_from_account <- function(acc_id, email_to_delete){
   return(TRUE)
 }
 
-#функция для удаления пользователя из ресурса.
+#'С„СѓРЅРєС†РёСЏ РґР»СЏ СѓРґР°Р»РµРЅРёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёР· СЂРµСЃСѓСЂСЃР°.
+#' @export
 delete_user_from_webproperty <- function(acc_id, webproperty_id, email_to_delete){
   
   webproperty_user_list <- ga_users_list(acc_id, webproperty_id, viewId = NULL)
@@ -71,7 +74,7 @@ delete_user_from_webproperty <- function(acc_id, webproperty_id, email_to_delete
   }
   if(userlink_to_delete == "")
   {
-    message("У пользователя нет доступа к данному ресурсу.")
+    message("РЈ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РЅРµС‚ РґРѕСЃС‚СѓРїР° Рє РґР°РЅРЅРѕРјСѓ СЂРµСЃСѓСЂСЃСѓ.")
     return(FALSE)
   }
   url <- sprintf("https://www.googleapis.com/analytics/v3/management/accounts/%s/webproperties/%s/entityUserLinks/%s",
@@ -93,7 +96,8 @@ delete_user_from_webproperty <- function(acc_id, webproperty_id, email_to_delete
   return(TRUE)
 }
 
-#функция для удаления пользователя из представления.
+#'С„СѓРЅРєС†РёСЏ РґР»СЏ СѓРґР°Р»РµРЅРёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёР· РїСЂРµРґСЃС‚Р°РІР»РµРЅРёСЏ.
+#' @export
 delete_user_from_view <- function(acc_id, webproperty_id, view_id, email_to_delete){
   
   view_user_list <- ga_users_list(acc_id, webproperty_id, view_id)
@@ -109,7 +113,7 @@ delete_user_from_view <- function(acc_id, webproperty_id, view_id, email_to_dele
   }
   if(userlink_to_delete == "")
   {
-    message("У пользователя нет доступа к данному представлению.")
+    message("РЈ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РЅРµС‚ РґРѕСЃС‚СѓРїР° Рє РґР°РЅРЅРѕРјСѓ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёСЋ.")
     return(FALSE)
   }
   url <- sprintf("https://www.googleapis.com/analytics/v3/management/accounts/%s/webproperties/%s/profiles/%s/entityUserLinks/%s",
@@ -131,7 +135,8 @@ delete_user_from_view <- function(acc_id, webproperty_id, view_id, email_to_dele
   return(TRUE)
 }
 
-#перебор аккаунтов, ресурсов и представлений с вызовом функций удаления на каждом шаге
+#'РїРµСЂРµР±РѕСЂ Р°РєРєР°СѓРЅС‚РѕРІ, СЂРµСЃСѓСЂСЃРѕРІ Рё РїСЂРµРґСЃС‚Р°РІР»РµРЅРёР№ СЃ РІС‹Р·РѕРІРѕРј С„СѓРЅРєС†РёР№ СѓРґР°Р»РµРЅРёСЏ РЅР° РєР°Р¶РґРѕРј С€Р°РіРµ
+#' @export
 delete_users_permissions <- function(emails_to_delete){
 
   acc_list <- ga_accounts()
@@ -139,7 +144,7 @@ delete_users_permissions <- function(emails_to_delete){
   for(i in 1:nrow(acc_list$items))
   {
     id <- acc_list$items[i, "id"]
-    ga_level <- "Аккаунт"
+    ga_level <- "РђРєРєР°СѓРЅС‚"
     
     if(inspect_permissions(acc_list, i, ga_level))
     { 
@@ -149,10 +154,10 @@ delete_users_permissions <- function(emails_to_delete){
       {
         if(email %in% acc_user_list$items$userRef$email)
         { 
-          cat(email, "имеет доступ к", acc_list$items[i, "name"], "(Аккаунт)", "\n")
+          cat(email, "РёРјРµРµС‚ РґРѕСЃС‚СѓРї Рє", acc_list$items[i, "name"], "(РђРєРєР°СѓРЅС‚)", "\n")
           
           if(delete_user_from_account(id, email))
-            cat(email, "удален из аккаунта", acc_list$items[i, "name"], "\n")
+            cat(email, "СѓРґР°Р»РµРЅ РёР· Р°РєРєР°СѓРЅС‚Р°", acc_list$items[i, "name"], "\n")
           
         }
       }
@@ -161,7 +166,7 @@ delete_users_permissions <- function(emails_to_delete){
     
     for(j in 1:nrow(webproperty_list$items))
     {
-      ga_level <- "\tРесурс"
+      ga_level <- "\tР РµСЃСѓСЂСЃ"
       web_property_id <- webproperty_list$items[j, "id"]
       
       if(inspect_permissions(webproperty_list, j, ga_level))
@@ -172,10 +177,10 @@ delete_users_permissions <- function(emails_to_delete){
         {
           if(email %in% prop_user_list$items$userRef$email)
           { 
-            cat("\t", email, "имеет доступ к", webproperty_list$items[j, "name"], "(Ресурс)", "\n")
+            cat("\t", email, "РёРјРµРµС‚ РґРѕСЃС‚СѓРї Рє", webproperty_list$items[j, "name"], "(Р РµСЃСѓСЂСЃ)", "\n")
             
             if(delete_user_from_webproperty(id, web_property_id, email))
-              cat("\t", email, "удален из ресурса", webproperty_list$items[j, "name"], "\n")
+              cat("\t", email, "СѓРґР°Р»РµРЅ РёР· СЂРµСЃСѓСЂСЃР°", webproperty_list$items[j, "name"], "\n")
             
           }
         }
@@ -185,7 +190,7 @@ delete_users_permissions <- function(emails_to_delete){
       
       for(k in 1:nrow(view_list$items))
       {
-        ga_level <- "\t\tПредставление"
+        ga_level <- "\t\tРџСЂРµРґСЃС‚Р°РІР»РµРЅРёРµ"
         view_id <- view_list$items[k, "id"]
         
         if(inspect_permissions(view_list, k, ga_level))
@@ -196,10 +201,10 @@ delete_users_permissions <- function(emails_to_delete){
           {
             if(email %in% view_user_list$items$userRef$email)
             { 
-              cat("\t\t", email, "имеет доступ к", view_list$items[k, "name"], "(Представление)", "\n")
+              cat("\t\t", email, "РёРјРµРµС‚ РґРѕСЃС‚СѓРї Рє", view_list$items[k, "name"], "(РџСЂРµРґСЃС‚Р°РІР»РµРЅРёРµ)", "\n")
               
               if(delete_user_from_view(id, web_property_id, view_id, email))
-                cat("\t\t", email, "удален из представления", view_list$items[k, "name"], "\n")
+                cat("\t\t", email, "СѓРґР°Р»РµРЅ РёР· РїСЂРµРґСЃС‚Р°РІР»РµРЅРёСЏ", view_list$items[k, "name"], "\n")
               
             }
           }
