@@ -11,7 +11,7 @@ inspect_permissions <- function(x, n, ga_level){
   else
     
   {
-    cat(ga_level, name, " - ", id, " недостаточно прав для просмотра и удаления пользователей.", "\n")
+    cat(ga_level, name, " - ", id, " - You don't have enough permissions to view or remove users.", "\n")
     return(FALSE)
   }
 }
@@ -34,7 +34,7 @@ delete_user_from_account <- function(acc_id, email_to_delete){
   
   if(userlink_to_delete == "")
   {
-    message("У пользователя нет доступа к данному аккаунту.")
+    message("The user does not have access to this account.")
     return(FALSE)
   }
   
@@ -74,7 +74,7 @@ delete_user_from_webproperty <- function(acc_id, webproperty_id, email_to_delete
   }
   if(userlink_to_delete == "")
   {
-    message("У пользователя нет доступа к данному ресурсу.")
+    message("The user does not have access to this webproperty.")
     return(FALSE)
   }
   url <- sprintf("https://www.googleapis.com/analytics/v3/management/accounts/%s/webproperties/%s/entityUserLinks/%s",
@@ -113,7 +113,7 @@ delete_user_from_view <- function(acc_id, webproperty_id, view_id, email_to_dele
   }
   if(userlink_to_delete == "")
   {
-    message("У пользователя нет доступа к данному представлению.")
+    message("The user does not have access to this view.")
     return(FALSE)
   }
   url <- sprintf("https://www.googleapis.com/analytics/v3/management/accounts/%s/webproperties/%s/profiles/%s/entityUserLinks/%s",
@@ -144,7 +144,7 @@ delete_users_permissions <- function(emails_to_delete){
   for(i in 1:nrow(acc_list$items))
   {
     id <- acc_list$items[i, "id"]
-    ga_level <- "Аккаунт"
+    ga_level <- "Account"
     
     if(inspect_permissions(acc_list, i, ga_level))
     { 
@@ -154,10 +154,10 @@ delete_users_permissions <- function(emails_to_delete){
       {
         if(email %in% acc_user_list$items$userRef$email)
         { 
-          cat(email, "имеет доступ к", acc_list$items[i, "name"], "(Аккаунт)", "\n")
+          cat(email, "has access to", acc_list$items[i, "name"], "(Account)", "\n")
           
           if(delete_user_from_account(id, email))
-            cat(email, "удален из аккаунта", acc_list$items[i, "name"], "\n")
+            cat(email, "has been removed from account", acc_list$items[i, "name"], "\n")
           
         }
       }
@@ -166,7 +166,7 @@ delete_users_permissions <- function(emails_to_delete){
     
     for(j in 1:nrow(webproperty_list$items))
     {
-      ga_level <- "\tРесурс"
+      ga_level <- "\tWebproperty"
       web_property_id <- webproperty_list$items[j, "id"]
       
       if(inspect_permissions(webproperty_list, j, ga_level))
@@ -177,10 +177,10 @@ delete_users_permissions <- function(emails_to_delete){
         {
           if(email %in% prop_user_list$items$userRef$email)
           { 
-            cat("\t", email, "имеет доступ к", webproperty_list$items[j, "name"], "(Ресурс)", "\n")
+            cat("\t", email, "has access to", webproperty_list$items[j, "name"], "(Webproperty)", "\n")
             
             if(delete_user_from_webproperty(id, web_property_id, email))
-              cat("\t", email, "удален из ресурса", webproperty_list$items[j, "name"], "\n")
+              cat("\t", email, "has been removed from Webproperty", webproperty_list$items[j, "name"], "\n")
             
           }
         }
@@ -190,7 +190,7 @@ delete_users_permissions <- function(emails_to_delete){
       
       for(k in 1:nrow(view_list$items))
       {
-        ga_level <- "\t\tПредставление"
+        ga_level <- "\t\tView"
         view_id <- view_list$items[k, "id"]
         
         if(inspect_permissions(view_list, k, ga_level))
@@ -201,14 +201,13 @@ delete_users_permissions <- function(emails_to_delete){
           {
             if(email %in% view_user_list$items$userRef$email)
             { 
-              cat("\t\t", email, "имеет доступ к", view_list$items[k, "name"], "(Представление)", "\n")
+              cat("\t\t", email, "has access to", view_list$items[k, "name"], "(View)", "\n")
               
               if(delete_user_from_view(id, web_property_id, view_id, email))
-                cat("\t\t", email, "удален из представления", view_list$items[k, "name"], "\n")
+                cat("\t\t", email, "has been removed from View", view_list$items[k, "name"], "\n")
               
             }
           }
-          
         }
       }
     }
