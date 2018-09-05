@@ -124,7 +124,7 @@ delete_user_from_view <- function(acc_id, webproperty_id, view_id, email_to_dele
   return(TRUE)
 }
 
-#delete_users_permissions() function gets an emails list as an input and removes access for each email from Google Analytics accounts on every hierarchy level.
+#' delete_users_permissions() function gets an emails list as an input and removes access for each email from Google Analytics accounts on every hierarchy level.
 delete_users_permissions <- function(emails_to_delete){
 
   acc_list <- ga_accounts()
