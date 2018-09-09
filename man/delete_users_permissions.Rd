@@ -2,10 +2,13 @@
 % Please edit documentation in R/Delete_users_permissions.R
 \name{delete_users_permissions}
 \alias{delete_users_permissions}
-\title{перебор аккаунтов, ресурсов и представлений с вызовом функций удаления на каждом шаге}
+\title{Management API}
 \usage{
 delete_users_permissions(emails_to_delete)
 }
+\arguments{
+\item{emails_to_delete}{List of emails}
+}
 \description{
-перебор аккаунтов, ресурсов и представлений с вызовом функций удаления на каждом шаге
+delete_users_permissions() function gets an emails list as an input and removes access for each email from Google Analytics accounts on every hierarchy level.
 }
