@@ -7,8 +7,8 @@
 delete_users_permissions(emails_to_delete)
 }
 \arguments{
-\item{emails_to_delete}{List of emails}
+\item{emails_to_delete}{character. List of emails}
 }
 \description{
-delete_users_permissions() function gets an emails list as an input and removes access for each email from Google Analytics accounts on every hierarchy level.
+function gets an emails list as an input and removes access for each email from Google Analytics accounts on every hierarchy level.
 }
