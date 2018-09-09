@@ -129,7 +129,7 @@ delete_user_from_view <- function(acc_id, webproperty_id, view_id, email_to_dele
 #'
 #' @param emails_to_delete List of emails
 #'
-#' @export()
+#' @export
 delete_users_permissions <- function(emails_to_delete){
 
   acc_list <- ga_accounts()
