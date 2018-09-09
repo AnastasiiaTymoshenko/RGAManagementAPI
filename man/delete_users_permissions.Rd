@@ -2,7 +2,7 @@
 % Please edit documentation in R/Delete_users_permissions.R
 \name{delete_users_permissions}
 \alias{delete_users_permissions}
-\title{Management API}
+\title{function gets an emails list as an input and removes access for each email from Google Analytics accounts on every hierarchy level.}
 \usage{
 delete_users_permissions(emails_to_delete)
 }
@@ -10,5 +10,5 @@ delete_users_permissions(emails_to_delete)
 \item{emails_to_delete}{List of emails}
 }
 \description{
-delete_users_permissions() function gets an emails list as an input and removes access for each email from Google Analytics accounts on every hierarchy level.
+function gets an emails list as an input and removes access for each email from Google Analytics accounts on every hierarchy level.
 }
