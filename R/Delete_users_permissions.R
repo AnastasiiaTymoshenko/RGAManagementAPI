@@ -132,6 +132,30 @@ delete_user_from_view <- function(acc_id, webproperty_id, view_id, email_to_dele
   return(TRUE)
 }
 
+check_permissions <- function(permissions_effective, permissions_local) {
+  read_and_analyze <- TRUE
+  if (grepl(".*(READ_AND_ANALYZE).*", permissions_effective)) {
+    read_and_analyze <- (grepl(".*(READ_AND_ANALYZE).*", permissions_local) || grepl(".*(COLLABORATE).*", permissions_local) || grepl(".*(EDIT).*", permissions_local))
+  }
+  
+  collaborate <- TRUE
+  if (grepl(".*(COLLABORATE).*", permissions_effective)) {
+    collaborate <- (grepl(".*(COLLABORATE).*", permissions_local) || grepl(".*(EDIT).*", permissions_local))
+  }
+  
+  edit <- TRUE
+  if (grepl(".*(EDIT).*", permissions_effective)) {
+    edit <- grepl(".*(EDIT).*", permissions_local)
+  }
+  
+  manage <- TRUE
+  if (grepl(".*(MANAGE_USERS).*", permissions_effective)) {
+    manage <- grepl(".*(MANAGE_USERS).*", permissions_local)
+  }
+  
+  return (read_and_analyze && collaborate && edit && manage)
+}
+
 #' @title Management API: Delete users permissions
 #' @description function gets an emails list as an input and removes access for each email from Google Analytics accounts on every hierarchy level.
 #'
@@ -139,27 +163,28 @@ delete_user_from_view <- function(acc_id, webproperty_id, view_id, email_to_dele
 #'
 #' @export
 delete_users_permissions <- function(emails_to_delete){
-
+  
   acc_list <- ga_accounts()
-
+  
   for(i in 1:nrow(acc_list$items))
   {
     id <- acc_list$items[i, "id"]
     ga_level <- "Account"
     
-    if(inspect_permissions(acc_list, i, ga_level))
+    inspect_account_response <- inspect_permissions(acc_list, i, ga_level)
+    if(inspect_account_response)
     { 
       acc_user_list <- ga_users_list(id, webPropertyId = NULL, viewId = NULL)
       
       for(email in emails_to_delete)
       {
         if(email %in% acc_user_list$items$userRef$email)
-        { 
+        {
           cat(email, "has access to", acc_list$items[i, "name"], "(Account)", "\n")
-          
-          if(delete_user_from_account(id, email))
+         
+          if(delete_user_from_account(id, email)) {
             cat(email, "has been removed from account", acc_list$items[i, "name"], "\n")
-          
+          }
         }
       }
     }
@@ -169,20 +194,34 @@ delete_users_permissions <- function(emails_to_delete){
     {
       ga_level <- "\tWebproperty"
       web_property_id <- webproperty_list$items[j, "id"]
+      emailsResponse <- list()
       
-      if(inspect_permissions(webproperty_list, j, ga_level))
+      inspect_webproperty_response <- inspect_permissions(webproperty_list, j, ga_level)
+      if(inspect_webproperty_response)
       {
         prop_user_list <- ga_users_list(id, web_property_id, viewId = NULL)
         
+        count <- 1;
         for(email in emails_to_delete)
         {
-          if(email %in% prop_user_list$items$userRef$email)
-          { 
-            cat("\t", email, "has access to", webproperty_list$items[j, "name"], "(Webproperty)", "\n")
-            
-            if(delete_user_from_webproperty(id, web_property_id, email))
-              cat("\t", email, "has been removed from Webproperty", webproperty_list$items[j, "name"], "\n")
-            
+          for(index in 1:nrow(prop_user_list$items))
+          {
+            if(email == prop_user_list$items$userRef[index, "email"])
+            {
+              cat("\t", email, "has access to", webproperty_list$items[j, "name"], "(Webproperty)", "\n")
+              permissions_effective <- prop_user_list$items$permissions[index, "effective"]
+              permissions_local <- prop_user_list$items$permissions[index, "local"]
+              response <- check_permissions(permissions_effective, permissions_local)
+              emailsResponse[[ count ]] <- response
+              count <- count + 1;
+              
+              if (inspect_account_response == FALSE && response == FALSE) {
+                cat("\t\t", "You don't have enough permissions to remove users from", webproperty_list$items[j, "name"], "- inherited permissions", "\n")
+              } else if(delete_user_from_webproperty(id, web_property_id, email)) {
+                cat("\t", email, "has been removed from Webproperty", webproperty_list$items[j, "name"], "\n")
+              }
+              break()
+            }
           }
         }
       }
@@ -198,15 +237,29 @@ delete_users_permissions <- function(emails_to_delete){
         {
           view_user_list <- ga_users_list(id, web_property_id, view_id)
           
+          count <- 1
           for(email in emails_to_delete)
           {
-            if(email %in% view_user_list$items$userRef$email)
-            { 
-              cat("\t\t", email, "has access to", view_list$items[k, "name"], "(View)", "\n")
-              
-              if(delete_user_from_view(id, web_property_id, view_id, email))
-                cat("\t\t", email, "has been removed from View", view_list$items[k, "name"], "\n")
-              
+            for(index in 1:nrow(view_user_list$items))
+            {
+              if(email == view_user_list$items$userRef[index, "email"])
+              {
+                cat("\t\t", email, "has access to", view_list$items[k, "name"], "(View)", "\n")
+                permissions_effective <- view_user_list$items$permissions[index, "effective"]
+                permissions_local <- view_user_list$items$permissions[index, "local"]
+                response <- check_permissions(permissions_effective, permissions_local)
+                
+                if (inspect_account_response == FALSE && inspect_webproperty_response == FALSE && response == FALSE) {
+                  cat("\t\t", "You don't have enough permissions to remove users from", view_list$items[k, "name"], "- inherited permissions", "\n")
+                } else if (inspect_account_response == FALSE && inspect_webproperty_response == TRUE && emailsResponse[[ count ]] == FALSE) {
+                  cat("\t\t", "You don't have enough permissions to remove users from", view_list$items[k, "name"], "- inherited permissions", "\n")
+                  count <- count + 1
+                } else if(delete_user_from_view(id, web_property_id, view_id, email)) {
+                  cat("\t\t", email, "has been removed from View", view_list$items[k, "name"], "\n")
+                }
+                
+                break()
+              }
             }
           }
         }
